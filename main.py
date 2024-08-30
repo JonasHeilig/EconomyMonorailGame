@@ -1,5 +1,6 @@
 from game import Game
 from ui import UI
+import tkinter as tk
 
 
 def main():
@@ -7,8 +8,9 @@ def main():
     city_name = "Monorail City"
 
     game = Game(start_budget, city_name)
-    ui = UI(game)
-    ui.start_game()
+    root = tk.Tk()
+    ui = UI(root, game)
+    root.mainloop()
 
 
 if __name__ == "__main__":

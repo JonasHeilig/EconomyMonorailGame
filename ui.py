@@ -1,47 +1,36 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 from game import Game
 from map_view import MapView
 
 
 class UI:
-    def __init__(self, root):
+    def __init__(self, root, game):
         self.root = root
-        self.game = Game(start_budget=100000, city_name="Berlin")
+        self.game = game
         self.root.title(f"Monorail Manager Game - {self.game.city_name}")
+        self.root.geometry("350x700")
 
-        self.status_label = tk.Label(root, text=self.get_status_text(), justify=tk.LEFT)
-        self.status_label.pack()
+        self.status_label = tk.Label(root, text=self.get_status_text(), justify=tk.LEFT, font=("Helvetica", 12))
+        self.status_label.pack(padx=10, pady=10)
 
-        self.add_train_button = tk.Button(root, text="Zug kaufen", command=self.add_train)
-        self.add_train_button.pack()
+        button_frame = tk.Frame(root)
+        button_frame.pack(pady=10, padx=10, fill=tk.BOTH, expand=True)
 
-        self.add_bus_button = tk.Button(root, text="Bus kaufen", command=self.add_bus)
-        self.add_bus_button.pack()
+        self.create_button(button_frame, "Zug kaufen", self.add_train)
+        self.create_button(button_frame, "Bus kaufen", self.add_bus)
+        self.create_button(button_frame, "Straßenbahn kaufen", self.add_tram)
+        self.create_button(button_frame, "Schienen bauen", self.build_tracks)
+        self.create_button(button_frame, "Fahrzeug reparieren", self.repair_vehicle)
+        self.create_button(button_frame, "Fahrzeug warten", self.maintenance_vehicle)
+        self.create_button(button_frame, "Fahrzeug upgraden", self.upgrade_vehicle)
+        self.create_button(button_frame, "Fahrgäste kontrollieren", self.inspect_vehicles)
+        self.create_button(button_frame, "Nächste Runde", self.next_turn)
+        self.create_button(button_frame, "Karte anzeigen", self.show_map)
 
-        self.add_tram_button = tk.Button(root, text="Straßenbahn kaufen", command=self.add_tram)
-        self.add_tram_button.pack()
-
-        self.build_tracks_button = tk.Button(root, text="Schienen bauen", command=self.build_tracks)
-        self.build_tracks_button.pack()
-
-        self.repair_vehicle_button = tk.Button(root, text="Fahrzeug reparieren", command=self.repair_vehicle)
-        self.repair_vehicle_button.pack()
-
-        self.maintenance_vehicle_button = tk.Button(root, text="Fahrzeug warten", command=self.maintenance_vehicle)
-        self.maintenance_vehicle_button.pack()
-
-        self.upgrade_vehicle_button = tk.Button(root, text="Fahrzeug upgraden", command=self.upgrade_vehicle)
-        self.upgrade_vehicle_button.pack()
-
-        self.inspect_button = tk.Button(root, text="Fahrgäste kontrollieren", command=self.inspect_vehicles)
-        self.inspect_button.pack()
-
-        self.next_turn_button = tk.Button(root, text="Nächste Runde", command=self.next_turn)
-        self.next_turn_button.pack()
-
-        self.map_button = tk.Button(root, text="Karte anzeigen", command=self.show_map)
-        self.map_button.pack()
+    def create_button(self, parent, text, command):
+        button = tk.Button(parent, text=text, command=command, width=20, height=2, font=("Helvetica", 10))
+        button.pack(pady=5)
 
     def get_status_text(self):
         status = self.game.show_status()
@@ -114,8 +103,10 @@ class UI:
             messagebox.showwarning("Keine Fahrzeuge", "Es gibt keine Fahrzeuge zur Auswahl.")
             return None
         vehicle_names = [vehicle.name for vehicle in vehicles]
-        selected_vehicle_name = tk.simpledialog.askstring("Fahrzeug auswählen",
-                                                          f"Wähle ein Fahrzeug aus: {', '.join(vehicle_names)}")
+        selected_vehicle_name = simpledialog.askstring("Fahrzeug auswählen",
+                                                       f"Wähle ein Fahrzeug aus: {', '.join(vehicle_names)}")
+        if not selected_vehicle_name:
+            return None
         selected_vehicle = next((v for v in vehicles if v.name == selected_vehicle_name), None)
         if not selected_vehicle:
             messagebox.showwarning("Ungültige Auswahl", "Fahrzeug nicht gefunden.")
@@ -124,5 +115,6 @@ class UI:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = UI(root)
+    game_instance = Game(start_budget=100000, city_name="Berlin")
+    app = UI(root, game_instance)
     root.mainloop()

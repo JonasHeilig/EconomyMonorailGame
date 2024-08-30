@@ -46,7 +46,7 @@ class Vehicle:
     def upgrade(self):
         if self.upgrade_stufe < 3:
             self.upgrade_stufe += 1
-            self.capacity = int(self.capacity * 1.2)  # Kapazität erhöhen
+            self.capacity = int(self.capacity * 1.2)
             return f"{self.name} wurde auf Stufe {self.upgrade_stufe} upgegraded."
         else:
             return f"{self.name} ist bereits auf maximalem Upgrade-Level."
